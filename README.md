@@ -13,7 +13,7 @@ Features:
 Parts:
 
 - https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/
-- https://www.adafruit.com/product/2298
+- [Adafruit 320x240 2.8" TFT](https://www.adafruit.com/product/2298)
 - https://www.adafruit.com/product/2807
 - https://www.adafruit.com/product/2256
 
@@ -22,8 +22,12 @@ Useful links:
 - https://learn.adafruit.com/adafruit-pitft-28-inch-resistive-touchscreen-display-raspberry-pi/easy-install-2
 - https://learn.adafruit.com/pi-hole-ad-pitft-tft-detection-display/raspberry-pi-setup
 - https://github.com/badaix/snapcast
-- - https://github.com/badaix/snapcast/blob/master/doc/install.md#debian
-- - https://github.com/skalavala/Multi-Room-Audio-Centralized-Audio-for-Home/blob/master/Install%20Snapcast%20Server.md
+  - https://github.com/badaix/snapcast/blob/master/doc/install.md#debian
+  - https://github.com/skalavala/Multi-Room-Audio-Centralized-Audio-for-Home/blob/master/Install%20Snapcast%20Server.md
+- [Smokeping configuration docs](https://oss.oetiker.ch/smokeping/doc/smokeping_config.en.html)
+- [Setting up cacti](http://www.greatwhitewifi.com/2016/02/12/network-monitoring-with-raspberry-pi-part-1-cacti/)
+- [Snapcast guide](https://www.technicallywizardry.com/speaker-multi-room-wireless-receiver/)
+- [Shairport](https://github.com/mikebrady/shairport-sync)
 
 ## Setup
 
@@ -33,6 +37,7 @@ $ sudo apt update
 $ sudo apt upgrade
 $ sudo dpkg --configure -a
 
+# ---- ---- ---- ----
 
 # Install screensavers
 $ sudo apt install xscreensaver
@@ -44,6 +49,7 @@ $ xscreensaver
 # Enable `ping` command for sonar screensaver
 $ sudo chmod +s /usr/lib/xscreensaver/sonar
 
+# ---- ---- ---- ----
 
 # Install spotify connect client
 sudo apt install -y apt-transport-https curl
@@ -66,6 +72,7 @@ sudo systemctl restart raspotify
 # Restart for changes to take effect
 sudo reboot
 
+# ---- ---- ---- ----
 
 # For Adafruit TFT hats: 
 # https://learn.adafruit.com/adafruit-pitft-28-inch-resistive-touchscreen-display-raspberry-pi/easy-install-2
@@ -80,10 +87,53 @@ cd Raspberry-Pi-Installer-Scripts
 # If the rotation is not correct, you can run this command again
 sudo python3 adafruit-pitft.py --display=28r --rotation=90 --install-type=fbcp
 
+# ---- ---- ---- ----
 
-# Install Pi Hole DNS server
+# Install PiHole DNS server
 curl -sSL https://install.pi-hole.net | sudo bash
 
+# Update PiHole to use port 81
+# Change `server.port = 80` to `server.port = 81`
+sudo nano /etc/lighttpd/lighttpd.conf
+# Restart lighttpd
+sudo service lighttpd restart
+
+# ---- ---- ---- ----
+
+# Install smokeping server monitor
+
+# First install apache, needed to serve smokeping (cgi)
+sudo apt install apache2
+# Enable apache CGI
+sudo a2enmod cgi
+# Restart apache
+sudo systemctl restart apache2
+
+# Now install smokeping
+# TODO: Configure for emailing on server down
+sudo apt install smokeping
+
+# Adjust desired delay and ping count, this is the default if not otherwise specified by probe
+# Recommended: step=300 pings=5
+sudo nano /etc/smokeping/config.d/Database
+
+# Configure probes
+# See recommendation below
+sudo nano /etc/smokeping/config.d/Probes
+
+# Add your desired targets
+sudo nano /etc/smokeping/config.d/Targets
+
+# Restart the service
+sudo systemctl restart smokeping
+
+# ---- ---- ---- ----
+
+# Install cacti network monitor
+# Note: The password you use during setup will be the admin password on the web interface
+sudo apt install cacti
+
+# ---- ---- ---- ----
 
 # Install audio server
 # Note: Find URL of latest version
@@ -112,4 +162,39 @@ sudo systemctl restart raspotify
 # Add loopback to snapcast server
 sudo nano /etc/snapserver.conf
 sudo systemctl restart snapserver
+```
+
+## Files
+
+### `/etc/smokeping/config.d/Database`
+```
+*** Database ***
+
+step     = 300
+pings    = 5
+```
+
+### `/etc/smokeping/config.d/Probes`
+```txt
+*** Probes ***
+
++ FPing
+
+binary = /usr/bin/fping
+
+++ FPingLarge
+packetsize = 1000
+step = 600
+pings = 4
+
+++ FPingNormal
+packetsize = 56
+step = 300
+pings = 4
+
+++ FPingLongDelay
+packetsize = 56
+step = 900
+pings = 4
+
 ```
