@@ -4,18 +4,20 @@ A project inspired by the Adafruit Pi-Hole.
 
 Features:
 
-- Tiny screen with cool screensavers
-- DNS server with optional built in ad blocking
-- Spotify connect device
-- Airplay audio device
-- Multi-room audio server
+- Tiny screen with cool screensavers (xscreensaver)
+- DNS server with optional built in ad blocking (Pi-hole)
+- Spotify connect device (Raspotify)
+- Airplay audio device (Shairport)
+- Multi-room audio server (Snapcast)
+- SNMP network monitoring (Cacti)
+- Server uptime and latency monitoring (SmokePing)
 
 Parts:
 
 - https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/
 - [Adafruit 320x240 2.8" TFT](https://www.adafruit.com/product/2298)
-- https://www.adafruit.com/product/2807
-- https://www.adafruit.com/product/2256
+- [Adafruit pi case](https://www.adafruit.com/product/2256)
+- [Adafruit pi faceplate and buttons](https://www.adafruit.com/product/2807)
 
 Useful links:
 
