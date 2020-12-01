@@ -71,8 +71,8 @@ sudo systemctl daemon-reload
 # Restart client
 sudo systemctl restart raspotify
 
-# Restart for changes to take effect
-sudo reboot
+# FIXME: Install this instead? Includes a spotify connect target, web frontend, web configuration
+# https://github.com/spocon/lovspotify
 
 # ---- ---- ---- ----
 
